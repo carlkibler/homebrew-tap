@@ -1,8 +1,8 @@
 class Toolsmith < Formula
   desc "Token-saving surgical reads and exact edits for AI coding agents"
   homepage "https://github.com/carlkibler/toolsmith"
-  url "https://registry.npmjs.org/@carlkibler/toolsmith/-/toolsmith-0.1.41.tgz"
-  sha256 "00e51dbe6230568419d01c1e5991d885780c8ec82c68818f4d4f1b331f6d7f50"
+  url "https://registry.npmjs.org/@carlkibler/toolsmith/-/toolsmith-0.1.42.tgz"
+  sha256 "46d3b946b3e74e6f642c932e06fadfa24002f20d3b641483b68af62b0046f2dd"
   license "MIT"
 
   depends_on "node"
