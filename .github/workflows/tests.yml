@@ -22,11 +22,16 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Register the checked-out repo as a named tap so audit/install/test work by name
+      # (brew audit/install no longer accept a bare formula path).
+      - name: Register this checkout as a tap
+        run: brew tap carlkibler/tap "$GITHUB_WORKSPACE"
+
       - name: Audit formula
-        run: brew audit --strict --formula ./Formula/toolsmith.rb
+        run: brew audit --strict carlkibler/tap/toolsmith
 
       - name: Install formula
-        run: brew install --formula ./Formula/toolsmith.rb
+        run: brew install carlkibler/tap/toolsmith
 
       - name: Test formula (CLI --version + MCP initialize over stdio)
-        run: brew test --formula ./Formula/toolsmith.rb
+        run: brew test carlkibler/tap/toolsmith
