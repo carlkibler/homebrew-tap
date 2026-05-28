@@ -1,0 +1,32 @@
+name: test formula
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# All actions pinned to a full commit SHA (not a moving tag) for supply-chain safety.
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out tap
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@6eaeff80e7e5c43087c0e5eb5aa82120399e9c91 # main @ 2026-05
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Audit formula
+        run: brew audit --strict --formula ./Formula/toolsmith.rb
+
+      - name: Install formula
+        run: brew install --formula ./Formula/toolsmith.rb
+
+      - name: Test formula (CLI --version + MCP initialize over stdio)
+        run: brew test --formula ./Formula/toolsmith.rb
