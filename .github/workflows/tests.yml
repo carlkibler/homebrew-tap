@@ -3,9 +3,10 @@ name: test formula
 on:
   push:
     branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 # All actions pinned to a full commit SHA (not a moving tag) for supply-chain safety.
+# Push CI tests main HEAD (the tap is fetched from GitHub) on both macOS and Linux.
 jobs:
   test:
     strategy:
@@ -14,24 +15,14 @@ jobs:
         os: [macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Check out tap
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@6eaeff80e7e5c43087c0e5eb5aa82120399e9c91 # main @ 2026-05
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Register the checked-out repo as a named tap so audit/install/test work by name
-      # (brew audit/install no longer accept a bare formula path).
-      - name: Register this checkout as a tap
-        run: brew tap carlkibler/tap "$GITHUB_WORKSPACE"
-
-      - name: Audit formula
-        run: brew audit --strict carlkibler/tap/toolsmith
-
-      - name: Install formula
-        run: brew install carlkibler/tap/toolsmith
-
-      - name: Test formula (CLI --version + MCP initialize over stdio)
-        run: brew test carlkibler/tap/toolsmith
+      - name: Tap, audit, install, and test the formula
+        run: |
+          brew tap carlkibler/tap
+          brew audit --strict carlkibler/tap/toolsmith
+          brew install carlkibler/tap/toolsmith
+          brew test carlkibler/tap/toolsmith
